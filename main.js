@@ -46,7 +46,7 @@ function createWindow () {
   win.fullScreen = true;
   win.fullScreenable = false;
   win.setResizable(false);
-  // win.setAlwaysOnTop(true);
+  win.setAlwaysOnTop(true);
 }
 
 app.whenReady().then(() => {
