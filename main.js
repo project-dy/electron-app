@@ -1,5 +1,5 @@
 
-const { app, BrowserWindow, globalShortcut } = require('electron');
+const { app, BrowserWindow, globalShortcut, dialog } = require('electron');
 const localShortcut = require('electron-localshortcut');
 
 function createWindow () {
@@ -16,9 +16,8 @@ function createWindow () {
   });
 
   globalShortcut.register('CommandOrControl+Shift+I', () => {
-    console.log('CommandOrControl+Shift+I is pressed')
-  })
-
+    console.log('CommandOrControl+Shift+I is pressed');
+  });
   // Disable 'Ctrl+Q'
   localShortcut.unregister(win, 'Ctrl+Q');
 
@@ -39,14 +38,35 @@ function createWindow () {
     e.preventDefault();
   });
 
+  const fs = require('fs');
+  const path = require('path');
+
+  const configPath = (__dirname) ? path.join(__dirname, 'config.json') : path.join(process.execPath, '../config.json');
+  // console.log(configPath);
+  // configPath를 사용자에게 alert로 보여주기
+  // dialog.showMessageBoxSync({message:'configPath: ' + configPath});
+  let configFile;
+  if (fs.existsSync(configPath)) { // 파일이 있으면
+    configFile = fs.readFileSync(configPath).toString();
+  } else { // 파일이 없으면
+    // configFile = fs.readFileSync(path.join(__dirname, 'config.json')).toString();
+    fs.writeFileSync(configPath, JSON.stringify({
+      url: 'http://localhost:3000'
+    }));
+    configFile = fs.readFileSync(configPath).toString();
+  }
+  const config = JSON.parse(configFile);
+  // dialog.showMessageBoxSync({message:'config: ' + JSON.stringify(config)});
+
   // localhost:3000 로드
-  win.loadURL('http://localhost:3000');
+  win.loadURL(config.url);
+  // win.loadURL('http://localhost:3000');
   win.maximize();
   win.setMenuBarVisibility(false);
-  win.fullScreen = true;
-  win.fullScreenable = false;
-  win.setResizable(false);
-  win.setAlwaysOnTop(true);
+  //win.fullScreen = true;
+  //win.fullScreenable = false;
+  //win.setResizable(false);
+  //win.setAlwaysOnTop(true);
 }
 
 app.whenReady().then(() => {

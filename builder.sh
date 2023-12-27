@@ -1,3 +1,4 @@
+exit 0
 cp dist build -r
 cd build
 rm -rf builder-* -rf
